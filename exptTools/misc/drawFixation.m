@@ -45,7 +45,7 @@ switch(lower(d.fixType))
     case {'none'}
         %do nothing
  
-    case {'dot' 'dot with grid' 'small dot'}
+    case {'dot' 'dot with grid' 'small dot' '4 color dot'}
         Screen('glPoint', d.windowPtr, d.fixColorRgb(colIndex,:), d.fixX, d.fixY, d.fixSizePixels);
     
     case {'lateraldot'}
