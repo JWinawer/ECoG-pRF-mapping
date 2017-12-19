@@ -25,6 +25,7 @@ stimulus = retLoadStimulus(params);
 % loading mex functions for the first time can be
 % extremely slow (seconds!), so we want to make sure that
 % the ones we are using are loaded.
+ListenChar(2);
 KbCheck;GetSecs;WaitSecs(0.001);
 
 try
@@ -78,10 +79,6 @@ try
         onlyWaitKb = false;
         pressKey2Begin(params.display, onlyWaitKb, [], [], params.triggerKey);
 
-
-        % If we are doing eCOG, then signal to photodiode that expt is
-        % starting by giving a patterned flash
-        retECOGdiode(params);
         
         % countdown + get start time (time0)
         [time0] = countDown(params.display,params.countdown,params.startScan, params.trigger);
@@ -91,8 +88,8 @@ try
         % go
         if isfield(params, 'modality') && strcmpi(params.modality, 'ecog')
             timeFromT0 = false;
-        else timeFromT0 = true;
-        end
+        else, timeFromT0 = true;
+        end        
         [response, timing, quitProg] = showScanStimulus(params.display,stimulus,time0, timeFromT0); %#ok<ASGLU>
         
         % reset priority
@@ -103,11 +100,11 @@ try
         fprintf('[%s]: percent correct: %.1f %%, reaction time: %.1f secs',mfilename,pc,rc);
         
         % save
-        if params.savestimparams,
+        if params.savestimparams
             filename = ['~/Desktop/' datestr(now,30) '.mat'];
             save(filename);                % save parameters
             fprintf('[%s]:Saving in %s.',mfilename,filename);
-        end;
+        end
         
         % don't keep going if quit signal is given
         if quitProg, break; end;
@@ -120,6 +117,7 @@ try
 catch ME
     % clean up if error occurred
     Screen('CloseAll'); 
+    ListenChar(0)
     setGamma(0); Priority(0); ShowCursor;
     warning(ME.identifier, ME.message);
 end;

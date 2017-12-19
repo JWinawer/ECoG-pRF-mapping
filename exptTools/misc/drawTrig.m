@@ -5,7 +5,7 @@ function colIndex = drawTrig(d, colIndex)
 % Draws a square trigger to sync eCog recording with stimulus 
 %
 
-if nargin < 2, colIndex = 1; end;
+if nargin < 2, colIndex = 1; end
 
 x = d.numPixels(1);
 y = d.numPixels(2);
