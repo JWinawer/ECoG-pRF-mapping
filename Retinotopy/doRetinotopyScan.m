@@ -22,10 +22,17 @@ else,                           removeImages = false; end
 % make/load stimulus
 stimulus = retLoadStimulus(params);
 
+% WARNING! ListChar(2) enables Matlab to record keypresses while disabling
+% output to the command window or editor window. This is good for running
+% experiments because it prevents buttonpresses from accidentally
+% overwriting text in scripts. But it is dangerous because if the code
+% quits prematurely, the user may be left unable to type in the command
+% window. Command window access can be restored by control-C.
+ListenChar(2);
+
 % loading mex functions for the first time can be
 % extremely slow (seconds!), so we want to make sure that
 % the ones we are using are loaded.
-ListenChar(2);
 KbCheck;GetSecs;WaitSecs(0.001);
 
 try
@@ -107,20 +114,21 @@ try
         end
         
         % don't keep going if quit signal is given
-        if quitProg, break; end;
+        if quitProg, break; end
         
-    end;
+    end
     
     % Close the one on-screen and many off-screen windows
     closeScreen(params.display);
-
+    ListenChar(1)
+    
 catch ME
     % clean up if error occurred
     Screen('CloseAll'); 
-    ListenChar(0)
+    ListenChar(1)
     setGamma(0); Priority(0); ShowCursor;
-    warning(ME.identifier, ME.message);
-end;
+    warning(ME.identifier, '%s', ME.message);
+end
 
 
 return;
