@@ -18,29 +18,29 @@ devices.keyInputInternal = [];
 devices.keyInputExternal = [];
 
 % loop over all devices and try kbCheck
-disp(sprintf('[%s]:Getting device information and testing KbCheck:',mfilename));
-for n=1:length(d),
+fprintf('[%s]:Getting device information and testing KbCheck:\n',mfilename);
+for n=1:length(d)
     fprintf(1,'   Device %d: %s (%s): ',n,d(n).product,d(n).transport);
     try
         evalc(sprintf('KbCheck(%d)',n)); % we don't need the error output
         fprintf(1,'KbCheck(%d) OK.\n',n);
         % store and organize 'good' device numbers
         internal = 0;
-        if strcmpi(d(n).transport,'adb'),
+        if strcmpi(d(n).transport,'adb')
             internal = 1;
-        end;
-        if length(d(n).product) >= 14,
-            if strcmpi(d(n).product(1:14),'apple internal'),
+        end
+        if length(d(n).product) >= 14
+            if strcmpi(d(n).product(1:14),'apple internal')
                 internal = 1;
-            end;
-        end;
+            end
+        end
         
-       if internal,
+       if internal
            devices.keyInputInternal = [devices.keyInputInternal n];
        else % we assume it is an external device
            devices.keyInputExternal = [devices.keyInputExternal n];
-       end;
+       end
     catch
         fprintf(1,'KbCheck(%d) failed.\n',n);
-    end;
-end;
+    end
+end

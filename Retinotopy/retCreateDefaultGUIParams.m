@@ -43,6 +43,7 @@ params.startScan       = 0;
 params.trigger         = 'Scanner triggers computer';
 params.triggerKey      = '5';
 params.skipSyncTests   = true; % tell PTB to skip sync tests
+params.subjID          = 'demo99';
 
 % If we input params, then use this for all defined fields
 if ~isempty(curdata)

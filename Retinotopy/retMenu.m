@@ -133,7 +133,7 @@ return;
 
 
 %----------------------------------------------------------
-% ---  Copy paramaters from data struct to the GUI window
+% ---  Copy parameters from data struct to the GUI window
 %----------------------------------------------------------
 function dataToWindow(hObject)
 

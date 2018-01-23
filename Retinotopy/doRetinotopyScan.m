@@ -22,6 +22,7 @@ else,                           removeImages = false; end
 % make/load stimulus
 stimulus = retLoadStimulus(params);
 
+fprintf('[%s]: Experiment duration (seconds): %6.3f\n', mfilename, stimulus.seqtiming(end))
 % WARNING! ListChar(2) enables Matlab to record keypresses while disabling
 % output to the command window or editor window. This is good for running
 % experiments because it prevents buttonpresses from accidentally
@@ -48,7 +49,8 @@ try
     xy = params.display.numPixels; % store screen dimensions in case they change
     params.display                = openScreen(params.display);
     params.display.devices        = params.devices;
-  
+    params.display.triggerKey     = params.triggerKey;
+    
     % Reset Fixation parameters if needed (ie if the dimensions of the
     % screen after opening do not match the dimensions specified in the
     % calibration file) 
@@ -104,13 +106,21 @@ try
         
         % get performance
         [pc,rc] = getFixationPerformance(params.fix,stimulus,response);
-        fprintf('[%s]: percent correct: %.1f %%, reaction time: %.1f secs',mfilename,pc,rc);
+        fprintf('[%s]: percent correct: %.1f\nreaction time: %.1f secs\n',mfilename,pc,rc);
         
         % save
         if params.savestimparams
-            filename = ['~/Desktop/' datestr(now,30) '.mat'];
-            save(filename);                % save parameters
-            fprintf('[%s]:Saving in %s.',mfilename,filename);
+            pth = fullfile(vistadispRootPath, 'Data');
+            
+            fname = sprintf('%s_%s', params.subjID, datestr(now,30));
+            
+            save(fullfile(pth, sprintf('%s.mat', fname)));
+            
+            fprintf('[%s]:Saving in %s.\n', mfilename, fullfile(pth, fname));
+            
+            writetable(stimulus.tsv, fullfile(pth, sprintf('%s.tsv', fname)), ...
+                'FileType','text', 'Delimiter', '\t')
+            
         end
         
         % don't keep going if quit signal is given

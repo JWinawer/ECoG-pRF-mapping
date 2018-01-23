@@ -10,7 +10,7 @@ function params = setRetinotopyDevices(params)
 
 params.devices = getDevices;
 
-if isempty(params.devices.keyInputExternal),
+if isempty(params.devices.keyInputExternal)
     params.devices.keyInputExternal = params.devices.keyInputInternal(1);
 
 elseif length(params.devices.keyInputExternal) > 1
@@ -19,7 +19,7 @@ elseif length(params.devices.keyInputExternal) > 1
     % no guarantee which device this will be, but often it is the computer
     % keyboard...?)  (ras, 05/2009)
     params.devices.keyInputExternal = params.devices.keyInputExternal(1);
-end;
+end
  
 fprintf('[%s]:Getting subjects responses from device #%d\n',mfilename,params.devices.keyInputExternal);
 fprintf('[%s]:Getting experimentor''s responses from device #%d\n',mfilename,params.devices.keyInputInternal);
