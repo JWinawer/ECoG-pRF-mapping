@@ -1,4 +1,4 @@
-function list = getDisplaysList;
+function list = getDisplaysList
 % Return a list of the display parameters saved in the VISTADISP
 % repository.
 %
@@ -35,31 +35,15 @@ function list = getDisplaysList;
 %
 % ras, 07/08/2008.
 list = {};
-pth1 = getDisplayPath;
-pth2 = fullfile(pth1, 'PsychCalLocalData');
+pth = getDisplayPath;
 
 %% first look for the old-format displays
-w = dir(pth1);
+w = dir(pth);
 for ii = find( [w.isdir] )
-    if exist( fullfile(pth1, w(ii).name, 'displayParams.m'), 'file' )
+    if exist( fullfile(pth, w(ii).name, 'displayParams.m'), 'file' )
         list{end+1} = w(ii).name;
     end
 end
 
-%% now look for newer-format displays
-w = dir(pth2);
-for ii = find( [w.isdir] )
-    if exist( fullfile(pth1, w(ii).name, 'displayParams.m'), 'file' )
-        list{end+1} = w(ii).name;
-    end
-end
-
-w = what(pth2);
-for ii = 1:length(w.mat)
-    tmp = load( fullfile(pth2, w.mat{ii}) );
-    if isfield(tmp, 'cals')
-        [ignore list{end+1}] = fileparts(w.mat{ii});
-    end
-end
 
 return

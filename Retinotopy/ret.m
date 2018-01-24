@@ -35,7 +35,7 @@ function params = ret(params)
 
 % get some parameters from graphical interface
 if ~exist('params', 'var'), params = []; end
-%params = retMenu(params);
+params = retMenu(params);
 
 % if user aborted GUI, exit gracefully
 if notDefined('params'), return; end
