@@ -57,7 +57,7 @@ if(~isfield(displayID,'gammaTable'))
 	disp('Using default linear gamma table');
 end
 
-if(~isfield(displayID,'distance'));
+if(~isfield(displayID,'distance'))
 	displayID.distance = 50;
 	disp('Using default display distance of 50 cm');
 end
@@ -79,7 +79,7 @@ catch ME
     % range
     putgamma = displayID.gamma(round(linspace(1,size(displayID.gamma,1),256)),:);
     Screen('LoadNormalizedGammaTable', displayID.screenNumber,putgamma);
-end;
+end
 
 % Force the resolution indicated in the display parameter file.  Let the
 % user know if this fails, storing the actual resolution and hz within

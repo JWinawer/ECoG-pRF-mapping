@@ -5,13 +5,14 @@ function stimulus = makeRetinotopyStimulusFromFile(params)
 
 % Check whether loadMatrix exists
 if ~isfield(params, 'loadMatrix'), error('No loadMatrix to load'); end
-if ~exist(params.loadMatrix, 'file'), error('Cannot locate stim file %s.', params.loadMatrix); end
+stimPath = fullfile(vistadispRootPath, 'StimFiles', params.loadMatrix);
+if ~exist(stimPath, 'file'), error('Cannot locate stim file %s.', stimPath); end
 
 % Load the stimulus from a stored file
-tmp = load(params.loadMatrix, 'stimulus');
+tmp = load(stimPath, 'stimulus');
 
 if isfield(tmp, 'stimulus'),  stimulus = tmp.stimulus;    
-else                          stimulus = tmp;  end
+else,                         stimulus = tmp;  end
 
 % clear textures field if it extists. textures will be remade lated
 if isfield(stimulus, 'textures'), stimulus = rmfield(stimulus, 'textures'); end

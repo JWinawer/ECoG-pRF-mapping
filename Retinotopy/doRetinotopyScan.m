@@ -16,11 +16,8 @@ if ~exist('params', 'var'), error('No parameters specified!'); end
 if ~isfield(params, 'skipSyncTests'), skipSyncTests = true;
 else,                                 skipSyncTests = params.skipSyncTests; end
 
-if isempty(params.saveMatrix),  removeImages = true; 
-else,                           removeImages = false; end
-
 % make/load stimulus
-stimulus = retLoadStimulus(params);
+stimulus = makeRetinotopyStimulusFromFile(params);
 
 fprintf('[%s]: Experiment duration (seconds): %6.3f\n', mfilename, stimulus.seqtiming(end))
 % WARNING! ListChar(2) enables Matlab to record keypresses while disabling
@@ -48,7 +45,6 @@ try
     % Open the screen
     xy = params.display.numPixels; % store screen dimensions in case they change
     params.display                = openScreen(params.display);
-    params.display.devices        = params.devices;
     params.display.triggerKey     = params.triggerKey;
     
     % Reset Fixation parameters if needed (ie if the dimensions of the
@@ -64,18 +60,14 @@ try
     Screen('BlendFunction', params.display.windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     % Store the images in textures
-    stimulus = createTextures(params.display,stimulus, removeImages);
+    stimulus = createTextures(params.display,stimulus);
     
     % If necessary, flip the screen LR or UD  to account for mirrors
     % We now do a single screen flip before the experiment starts (instead
     % of flipping each image). This ensures that everything, including
     % fixation, stimulus, countdown text, etc, all get flipped.
     retScreenReverse(params, stimulus);
-    
-    % If we are doing ECoG, then add photodiode flash to every other frame
-    % of stimulus. This can be used later for syncing stimulus to electrode
-    % outputs.
-    stimulus = retECOGtrigger(params, stimulus);
+ 
     
     for n = 1:params.repetitions
         % set priority
@@ -99,7 +91,7 @@ try
             timeFromT0 = false;
         else, timeFromT0 = true;
         end        
-        [response, timing, quitProg] = showScanStimulus(params.display,stimulus,time0, timeFromT0); %#ok<ASGLU>
+        [response, timing, quitProg] = showScanStimulus(params,stimulus,time0, timeFromT0); %#ok<ASGLU>
         
         % reset priority
         Priority(0);

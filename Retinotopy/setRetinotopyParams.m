@@ -22,10 +22,6 @@ disp(['[' mfilename ']:Setting stimulus parameters for ' expName '.']);
 params = retSetCommonDefaults(params, expName);
 
 
-% Stimulus-specific parameters                                      %
-params = retSetExperimentParams(params, expName);
-
-
 % Fixation parameters                                               %
 params = retSetFixationParams(params, expName);
 
@@ -33,6 +29,3 @@ params = retSetFixationParams(params, expName);
 % Derived parameters (not to be updated by user)				    %
 params = retSetDerivedParams(params);
 
-params.period = round(params.period/params.framePeriod) * params.framePeriod;
-% some checks, must be done before we reset certain params
-retParamsCheck(params);

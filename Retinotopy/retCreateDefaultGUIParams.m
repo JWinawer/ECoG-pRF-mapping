@@ -19,7 +19,7 @@ function params = retCreateDefaultGUIParams(curdata)
 
 if ~exist('curdata', 'var'), curdata = []; end
 
-params.experiment      = '8 bars with blanks';
+params.experiment      = 'experiment from file';
 params.fixation        = 'double disk';
 params.modality        = 'fMRI';
 params.savestimparams  = 1;
@@ -32,17 +32,16 @@ params.numCycles       = 1;
 params.motionSteps     = 8; % number of checkerboard positions per luminance cycle
 params.tempFreq        = 2; % frequency of checkerboard flicker (Hz)
 params.contrast        = 1; % checkerboard contrast
-params.interleaves     = NaN;
+params.interleaves     = [];
 params.tr              = 1.5;%seconds
 params.loadMatrix      = 'None';
-params.saveMatrix      = 'None';
 params.calibration     = 'None';
 params.stimSize        = 'max';
 params.countdown       = 0;
 params.startScan       = 0;
 params.trigger         = 'Scanner triggers computer';
 params.triggerKey      = '5';
-params.skipSyncTests   = true; % tell PTB to skip sync tests
+params.skipSyncTests   = 1; % tell PTB to skip sync tests
 params.subjID          = 'demo99';
 
 % If we input params, then use this for all defined fields
