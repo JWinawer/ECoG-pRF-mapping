@@ -101,19 +101,18 @@ try
         fprintf('[%s]: percent correct: %.1f\nreaction time: %.1f secs\n',mfilename,pc,rc);
         
         % save
-        if params.savestimparams
-            pth = fullfile(vistadispRootPath, 'Data');
-            
-            fname = sprintf('%s_%s', params.subjID, datestr(now,30));
-            
-            save(fullfile(pth, sprintf('%s.mat', fname)));
-            
-            fprintf('[%s]:Saving in %s.\n', mfilename, fullfile(pth, fname));
-            
-            writetable(stimulus.tsv, fullfile(pth, sprintf('%s.tsv', fname)), ...
-                'FileType','text', 'Delimiter', '\t')
-            
-        end
+        pth = fullfile(vistadispRootPath, 'Data');
+        
+        fname = sprintf('%s_%s', params.subjID, datestr(now,30));
+        
+        save(fullfile(pth, sprintf('%s.mat', fname)));
+        
+        fprintf('[%s]:Saving in %s.\n', mfilename, fullfile(pth, fname));
+        
+        writetable(stimulus.tsv, fullfile(pth, sprintf('%s.tsv', fname)), ...
+            'FileType','text', 'Delimiter', '\t')
+        
+        
         
         % don't keep going if quit signal is given
         if quitProg, break; end
