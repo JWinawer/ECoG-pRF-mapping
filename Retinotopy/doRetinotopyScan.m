@@ -109,9 +109,10 @@ try
         
         fprintf('[%s]:Saving in %s.\n', mfilename, fullfile(pth, fname));
         
-        writetable(stimulus.tsv, fullfile(pth, sprintf('%s.tsv', fname)), ...
-            'FileType','text', 'Delimiter', '\t')
-        
+        if any(contains(fieldnames(stimulus), 'tsv'))
+            writetable(stimulus.tsv, fullfile(pth, sprintf('%s.tsv', fname)), ...
+                'FileType','text', 'Delimiter', '\t')
+        end
         
         
         % don't keep going if quit signal is given
