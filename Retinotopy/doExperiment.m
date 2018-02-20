@@ -1,25 +1,22 @@
-function doRetinotopyScan(params)
-% doRetinotopyScan - runs retinotopy scans
+function doExperiment(params)
+% doExperiment - runs ECoG, MEG, EEG, or fMRI experiment
 %
-% doRetinotopyScan(params)
-%
-% Runs any of several retinotopy scans
-%
-% 99.08.12 RFD wrote it, consolidating several variants of retinotopy scan code.
-% 05.06.09 SOD modified for OSX, lots of changes.
-% 11.09.15 JW added a check for modality. If modality is ECoG, then call
-%           ShowScanStimulus with the argument timeFromT0 == false. See
-%           ShowScanStimulus for details. 
+% doExperiment(params)
+
+% Set rest of the params
+params = setRetinotopyParams(params.experiment, params);
+
+% Site-specific settings
+params = initializeSiteSpecificEnvironment(params);
 
 % defaults
 if ~exist('params', 'var'), error('No parameters specified!'); end
-if ~isfield(params, 'skipSyncTests'), skipSyncTests = true;
-else,                                 skipSyncTests = params.skipSyncTests; end
 
 % make/load stimulus
 stimulus = makeRetinotopyStimulusFromFile(params);
 
 fprintf('[%s]: Experiment duration (seconds): %6.3f\n', mfilename, stimulus.seqtiming(end))
+
 % WARNING! ListChar(2) enables Matlab to record keypresses while disabling
 % output to the command window or editor window. This is good for running
 % experiments because it prevents buttonpresses from accidentally
@@ -36,16 +33,12 @@ KbCheck;GetSecs;WaitSecs(0.001);
 try
     % check for OpenGL
     AssertOpenGL;
-    
-    % added a checkbox to ret gui allowing user to specify whether PTB
-    % should skip sync tests or not:
-    % Applications2/Retinotopy/standard/doRetinotopyScan.m
-    Screen('Preference','SkipSyncTests', skipSyncTests);
+      
+    Screen('Preference','SkipSyncTests', params.skipSyncTests);
     
     % Open the screen
     xy = params.display.numPixels; % store screen dimensions in case they change
     params.display                = openScreen(params.display);
-    params.display.triggerKey     = params.triggerKey;
     
     % Reset Fixation parameters if needed (ie if the dimensions of the
     % screen after opening do not match the dimensions specified in the
@@ -68,8 +61,8 @@ try
     % fixation, stimulus, countdown text, etc, all get flipped.
     retScreenReverse(params, stimulus);
  
-    
     for n = 1:params.repetitions
+        
         % set priority
         Priority(params.runPriority);
         
@@ -77,15 +70,12 @@ try
         retResetColorMap(params);
         
         % wait for go signal
-        onlyWaitKb = false;
-        pressKey2Begin(params.display, onlyWaitKb, [], [], params.triggerKey);
+        pressKey2Begin(params);
 
-        
         % countdown + get start time (time0)
-        [time0] = countDown(params.display,params.countdown,params.startScan, params.trigger);
+        [time0] = countDown(params.display,params.countdown,params.startScan,params.trigger);
         time0   = time0 + params.startScan; % we know we should be behind by that amount
-        
-        
+                
         % go
         if isfield(params, 'modality') && strcmpi(params.modality, 'ecog')
             timeFromT0 = false;
@@ -103,7 +93,7 @@ try
         % save
         pth = fullfile(vistadispRootPath, 'Data');
         
-        fname = sprintf('%s_%s', params.subjID, datestr(now,30));
+        fname = sprintf('%s_%s_%s_%s', params.subjID, params.experiment, params.site, datestr(now,30));
         
         save(fullfile(pth, sprintf('%s.mat', fname)));
         
@@ -123,9 +113,15 @@ try
     % Close the one on-screen and many off-screen windows
     closeScreen(params.display);
     ListenChar(1)
+    if params.useSerialPort
+        deviceUMC('close', params.siteSpecific.port);
+    end
     
 catch ME
     % clean up if error occurred
+    if params.useSerialPort 
+        deviceUMC('close', params.siteSpecific.port);
+    end
     Screen('CloseAll'); 
     ListenChar(1)
     setGamma(0); Priority(0); ShowCursor;

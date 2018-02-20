@@ -33,16 +33,15 @@ params.motionSteps     = 8; % number of checkerboard positions per luminance cyc
 params.tempFreq        = 2; % frequency of checkerboard flicker (Hz)
 params.contrast        = 1; % checkerboard contrast
 params.interleaves     = [];
-params.tr              = 1.5;%seconds
+params.tr              = 1.5; % seconds
 params.loadMatrix      = 'None';
 params.calibration     = 'None';
 params.stimSize        = 'max';
 params.countdown       = 0;
 params.startScan       = 0;
 params.trigger         = 'Scanner triggers computer';
-params.triggerKey      = '5';
-params.skipSyncTests   = 1; % tell PTB to skip sync tests
-params.subjID          = 'demo99';
+%params.triggerKey      = '5';
+%params.skipSyncTests   = 1; % tell PTB to skip sync tests
 
 % If we input params, then use this for all defined fields
 if ~isempty(curdata)
