@@ -26,21 +26,13 @@ switch params.site
         
         % Open serial port 
         if ~isempty(portName)
-        
-            % NOTE FROM UMC: The BaudRate needs to be adjustable, because
-            % it's different for fMRI and ECoG
-            box.port = IOPort('OpenSerialPort', portName, ['Terminator=0 ReceiveLatency=0.0001 BaudRate=9600']);
-            % start it
-            IOPort('ConfigureSerialPort', box.port, 'BlockingBackgroundRead=1');
-            IOPort('ConfigureSerialPort', box.port, 'StartBackgroundRead=1');
-            params.siteSpecific.port = box.port;  
-            % Alternative: use code from Ben Harvey to open port?
-            % params.siteSpecific.port = deviceUMC('open',portName);
+
+            params.siteSpecific.port = deviceUMC('open',portName);
         
         else
+            
             % For testing on a computer without a serial port, deviceUMC.m
             % can take a negative number as portname input and still run
-            % (presumably)
             params.siteSpecific.port = -1; % deviceUMC('open',portName);
         
         end
