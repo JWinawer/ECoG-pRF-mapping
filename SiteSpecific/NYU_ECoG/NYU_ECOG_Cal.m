@@ -6,8 +6,14 @@ prompt = {'y/n'};
 defaults = {'n'};
 answer = inputdlg(prompt, 'Calibrate display?', 1, defaults);
 if strcmpi(answer, 'y')
-    numMeasures = 17; % ideally, 2^n+1 acc to PTB
-    gammaTable1 = nyuCalibrateMonitorPhotometer(numMeasures, 0);
+    numMeasures = 17; % ideally, 2^n+1 acc to PTB    
+    
+    % For use with Cambridge Color Cal 2 (automated calibration)
+    gammaTable1 = nyuCalibrateMonitorColorCal2(numMeasures, 0);
+    
+    % If we are using the Minolta, which requires typing in the readings,
+    % we could call this instead:
+    % gammaTable1 = nyuCalibrateMonitorMinolta(numMeasures, 0);
     
     % use gammaTable 1, which is the powerlaw fit to the measurements
     g = gammaTable1;

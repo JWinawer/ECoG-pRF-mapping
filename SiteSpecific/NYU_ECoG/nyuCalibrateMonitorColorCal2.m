@@ -1,13 +1,10 @@
-function [ gammaTable1, gammaTable2, displayBaseline, displayRange, displayGamma, maxLevel ] = nyuCalibrateMonitorPhotometer(numMeasures, screenid)
+function [ gammaTable1, gammaTable2, displayBaseline, displayRange, displayGamma, maxLevel ] = nyuCalibrateMonitorColorCal2(numMeasures, screenid)
 % [gammaTable1, gammaTable2, displayBaseline, displayRange. displayGamma, maxLevel ] = CalibrateMonitorPhotometer([numMeasures=9][, screenid=max])
 %
-% A simple calibration script for analog photometers.
+% A simple calibration script for using the ColorCal2 photometer
+% Adapted from the native PTB function CalibrateMonitorPhotometer.m
 %
-% Use CalibrateMonSpd() if you want to do more fancy calibration with
-% different types of photometers or special devices like Bits+ or DataPixx,
-% assuming you know how to operate CalibrateMonSpd() that is...
-%
-% numMeasures (default: 9) readings are taken manually, and the readings
+% numMeasures (default: 9) readings are taken automatically, and the readings
 % are fit with a gamma function and piecewise cubic splines. numMeasures -
 % 1 should be a power of 2, ideally (9, 17, 33, etc.). The corresponding
 % linearized gamma tables (1 -> gamma, 2 -> splines) are returned, as well
@@ -31,15 +28,6 @@ function [ gammaTable1, gammaTable2, displayBaseline, displayRange, displayGamma
 % load MyGammaTable
 % Screen('LoadNormalizedGammaTable', win, gammaTable*[1 1 1]);
 %
-%
-% History:
-% Version 1.0: Patrick Mineault (patrick.mineault@gmail.com)
-% 22.10.2010 mk Switch numeric input from use of input() to use of
-%               GetNumber(). Restore gamma table after measurement. Make
-%               more robust.
-% 19.08.2012 mk Some cleanup.
-%  4.09.2012 mk Use Screen('ColorRange') to adapt number/max of intensity
-%               level to given range of framebuffer.
 
 global vals;
 global inputV;
@@ -47,12 +35,7 @@ global inputV;
     if (nargin < 1) || isempty(numMeasures)
         numMeasures = 9;
     end
-
-    input(sprintf(['When black screen appears, point photometer, \n' ...
-           'get reading in cd/m^2, input reading using numpad and press enter. \n' ...
-           'A screen of higher luminance will be shown. Repeat %d times. ' ...
-           'Press enter to start'], numMeasures));
-       
+                
     psychlasterror('reset');    
     try
         if nargin < 2 || isempty(screenid)
@@ -68,22 +51,21 @@ global inputV;
         LoadIdentityClut(win);
 
         vals = [];
-        inputV = [0:(maxLevel+1)/(numMeasures - 1):(maxLevel+1)]; %#ok<NBRAK>
+        inputV = [0:(maxLevel+1)/(numMeasures - 1):(maxLevel+1)]; 
         inputV(end) = maxLevel;
-        for i = inputV
-            Screen('FillRect',win,i);
+        for ii = inputV
+            luminance = GetLuminance;  
+            Screen('FillRect',win,ii);
             Screen('Flip',win);
 
-            fprintf('Value? ');
-            resp = input('Luminance? \n');
-            fprintf('\n');
-            vals = [vals resp]; %#ok<AGROW>
+            resp = luminance;
+            vals = [vals resp];
         end
-        
-        % Restore normal gamma table and close down:
+   
+       % Restore normal gamma table and close down:
         RestoreCluts;
         Screen('CloseAll');
-    catch %#ok<*CTCH>
+    catch 
         RestoreCluts;
         Screen('CloseAll');
         psychrethrow(psychlasterror);
@@ -96,7 +78,7 @@ global inputV;
     vals = (vals - displayBaseline) / displayRange;
     inputV = inputV/maxLevel;
     
-    if ~exist('fittype'); %#ok<EXIST>
+    if ~exist('fittype'); 
         fprintf('This function needs fittype() for automatic fitting. This function is missing on your setup.\n');
         fprintf('Therefore i can''t proceed, but the input values for a curve fit are available to you by\n');
         fprintf('defining "global vals;" and "global inputV" on the command prompt, with "vals" being the displayed\n');
@@ -108,22 +90,22 @@ global inputV;
     g = fittype('x^g');
     fittedmodel = fit(inputV',vals',g);
     displayGamma = fittedmodel.g;
-    gammaTable1 = ((([0:maxLevel]'/maxLevel))).^(1/fittedmodel.g); %#ok<NBRAK>
+    gammaTable1 = ((([0:maxLevel]'/maxLevel))).^(1/fittedmodel.g); 
     
-    firstFit = fittedmodel([0:maxLevel]/maxLevel); %#ok<NBRAK>
+    firstFit = fittedmodel([0:maxLevel]/maxLevel);
     
     %Spline interp fitting
     fittedmodel = fit(inputV',vals','splineinterp');
-    secondFit = fittedmodel([0:maxLevel]/maxLevel); %#ok<NBRAK>
+    secondFit = fittedmodel([0:maxLevel]/maxLevel); 
     
     figure;
-    plot(inputV, vals, '.', [0:maxLevel]/maxLevel, firstFit, '--', [0:maxLevel]/maxLevel, secondFit, '-.'); %#ok<NBRAK>
+    plot(inputV, vals, '.', [0:maxLevel]/maxLevel, firstFit, '--', [0:maxLevel]/maxLevel, secondFit, '-.'); 
     legend('Measures', 'Gamma model', 'Spline interpolation');
     title(sprintf('Gamma model x^{%.2f} vs. Spline interpolation', displayGamma));
     
     %Invert interpolation
     fittedmodel = fit(vals',inputV','splineinterp');
     
-    gammaTable2 = fittedmodel([0:maxLevel]/maxLevel); %#ok<NBRAK>
+    gammaTable2 = fittedmodel([0:maxLevel]/maxLevel); 
     
 return;
