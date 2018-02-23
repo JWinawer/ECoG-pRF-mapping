@@ -23,27 +23,25 @@ fprintf('[%s]: Experiment duration (seconds): %6.3f\n', mfilename, stimulus.seqt
 % overwriting text in scripts. But it is dangerous because if the code
 % quits prematurely, the user may be left unable to type in the command
 % window. Command window access can be restored by control-C.
-%ListenChar(2);
-ListenChar();
-PsychDebugWindowConfiguration(0.5);
+ListenChar(2);
+
 
 % loading mex functions for the first time can be
 % extremely slow (seconds!), so we want to make sure that
 % the ones we are using are loaded.
 KbCheck;GetSecs;WaitSecs(0.001);
 
-%try
+try
     % check for OpenGL
     AssertOpenGL;
       
     Screen('Preference','SkipSyncTests', params.skipSyncTests);
     
-    % IG THIS PART NOT WORKING ON DESKTOP FOR NYU-ECOG
+    % THIS PART NOT WORKING ON DESKTOP FOR NYU-ECOG
     
     % Open the screen
     xy = params.display.numPixels; % store screen dimensions in case they change
     params.display                = openScreen(params.display);
-    Screen('CloseAll');
     % Reset Fixation parameters if needed (ie if the dimensions of the
     % screen after opening do not match the dimensions specified in the
     % calibration file) 
@@ -51,7 +49,7 @@ KbCheck;GetSecs;WaitSecs(0.001);
     if isequal(xy, params.display.numPixels)
         % OK, nothing changed
     else
-        params = retSetFixationParams(params, params.experiment);
+        params = retSetFixationParams(params);
     end
     
     % to allow blending
@@ -122,16 +120,16 @@ KbCheck;GetSecs;WaitSecs(0.001);
         deviceUMC('close', params.siteSpecific.port);
     end
     
-% catch ME
-%     % clean up if error occurred
-%     if params.useSerialPort 
-%         deviceUMC('close', params.siteSpecific.port);
-%     end
-%     Screen('CloseAll'); 
-%     ListenChar(1)
-%     setGamma(0); Priority(0); ShowCursor;
-%     warning(ME.identifier, '%s', ME.message);
-% end
+ catch ME
+    % clean up if error occurred
+    if params.useSerialPort 
+        deviceUMC('close', params.siteSpecific.port);
+    end
+    Screen('CloseAll'); 
+    ListenChar(1)
+    setGamma(0); Priority(0); ShowCursor;
+    warning(ME.identifier, '%s', ME.message);
+end
 
 return;
 

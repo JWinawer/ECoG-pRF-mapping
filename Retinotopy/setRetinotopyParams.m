@@ -23,7 +23,7 @@ params = retSetCommonDefaults(params, expName);
 
 
 % Fixation parameters                                               %
-params = retSetFixationParams(params, expName);
+params = retSetFixationParams(params);
 
 
 % Derived parameters (not to be updated by user)				    %
