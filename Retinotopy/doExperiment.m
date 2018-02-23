@@ -4,7 +4,7 @@ function doExperiment(params)
 % doExperiment(params)
 
 % Set rest of the params
-params = setRetinotopyParams(params.experiment, params);
+params = setScreenAndFixationParams(params.experiment, params);
 
 % Site-specific settings
 params = initializeSiteSpecificEnvironment(params);
@@ -41,11 +41,12 @@ try
     
     % Open the screen
     xy = params.display.numPixels; % store screen dimensions in case they change
-    params.display                = openScreen(params.display);
+    params.display = openScreen(params.display);
+    
+    
     % Reset Fixation parameters if needed (ie if the dimensions of the
     % screen after opening do not match the dimensions specified in the
     % calibration file) 
-
     if isequal(xy, params.display.numPixels)
         % OK, nothing changed
     else
