@@ -1,7 +1,7 @@
-function stimulus = makeRetinotopyStimulusFromFile(params)
+function stimulus = makeStimulusFromFile(params)
 % Load a stimulus description from a file
 %
-% stimulus = makeRetinotopyStimulusFromFile(params)
+% stimulus = makeStimulusFromFile(params)
 
 % Check whether loadMatrix exists
 if ~isfield(params, 'loadMatrix'), error('No loadMatrix to load'); end

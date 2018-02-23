@@ -9,9 +9,9 @@ switch params.site
         AudPnt = PsychPortAudio('Open', [], [], 0, fs, 1);
         
         % creating the square wave (or appending it to an audio stimulus as the first channel in the stereo file)
-        square = [ones(1,fs/1000*50) -1*ones(1,fs/1000*50)];
-        audiowrite('trigger.wav',square,fs);
-        
+        % To make trigger.wav:
+        %       square = [ones(1,fs/1000*50) -1*ones(1,fs/1000*50)];
+        %       audiowrite('trigger.wav',square,fs);        
         wavdata = audioread('trigger.wav');
         
         % play stimuli (one channel is a square wave)
