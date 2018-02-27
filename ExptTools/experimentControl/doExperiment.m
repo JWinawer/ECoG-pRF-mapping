@@ -38,7 +38,22 @@ try
         
     % Open the screen
     params.display = openScreen(params.display);
-        
+    
+    if params.useEyeTracker
+          global PTBTheWindowPtr
+          PTBTheWindowPtr = params.display.windowPtr;
+     
+          PTBInitEyeTracker;
+          % paragraph = {'Eyetracker initialized.','Get ready to calibrate.'};
+          % PTBDisplayParagraph(paragraph, {'center',30}, {'a'});
+          PTBCalibrateEyeTracker;
+    
+          % actually starts the recording
+          % name correponding to MEG file (can only be 8 characters!!, no extension)
+          PTBStartEyeTrackerRecording('eyelink');
+          % Q How is the path to the log files set?
+    end
+    
     % Reset Fixation parameters if needed (ie if the dimensions of the
     % screen after opening do not match the dimensions specified in the
     % calibration file)
@@ -57,22 +72,23 @@ try
     time0 = pressKey2Begin(params);
         
     %% Do the experiment!
-    if isfield(params, 'modality') && strcmpi(params.modality, 'ecog')
-        timeFromT0 = false;
-    else, timeFromT0 = true;
+    if isfield(params, 'modality') && strcmpi(params.modality, 'fMRI')
+        timeFromT0 = true;
+    else, timeFromT0 = false;
     end
+
     [response, timing, quitProg] = showScanStimulus(params,stimulus,time0, timeFromT0); %#ok<ASGLU>
     
     %% After experiment
     
-    % reset priority
+    % Reset priority
     Priority(0);
     
-    % get performance
+    % Get performance
     [pc,rc] = getFixationPerformance(params.fix,stimulus,response);
     fprintf('[%s]: percent correct: %.1f\nreaction time: %.1f secs\n',mfilename,pc,rc);
     
-    % save
+    % Save
     pth = fullfile(vistadispRootPath, 'Data');
     
     fname = sprintf('%s_%s_%s_%s', params.subjID, params.experiment, params.site, datestr(now,30));
@@ -85,19 +101,35 @@ try
         writetable(stimulus.tsv, fullfile(pth, sprintf('%s.tsv', fname)), ...
             'FileType','text', 'Delimiter', '\t')
     end
-    
-    
+     
     % Close the one on-screen and many off-screen windows
     closeScreen(params.display);
     ListenChar(1)
+    
+    % Close site-specific functionalities
     if params.useSerialPort
         deviceUMC('close', params.siteSpecific.port);
     end
-    
+    if params.useEyeTracker
+        PTBStopEyeTrackerRecording; % <----------- (can take a while)
+        
+        % move the file to the logs directory
+        destination = 'eyelink';
+        i = 0;
+        while exist([destination num2str(i) '.edf'], 'file')
+            i = i + 1;
+        end
+        %movefile('eyelink.edf', [destination num2str(i) '.edf'])
+        movefile(fullfile(pth, 'eyelink.edf'), [destination num2str(i) '.edf']);
+    end
+
 catch ME
-    % clean up if error occurred
+    % Clean up if error occurred
     if params.useSerialPort
         deviceUMC('close', params.siteSpecific.port);
+    end
+    if params.useEyeTracker
+        PTBStopEyeTrackerRecording; 
     end
     Screen('CloseAll');
     ListenChar(1)

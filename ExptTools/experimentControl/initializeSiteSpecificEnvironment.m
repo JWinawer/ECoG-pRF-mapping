@@ -1,6 +1,16 @@
 function params = initializeSiteSpecificEnvironment(params)
 
 switch params.site
+    case 'NYU-MEG'
+        
+        % Initialize eye tracker
+        
+        PTBInitStimTracker;
+        global PTBTriggerLength 
+        PTBTriggerLength = 0.005;
+
+        % Q do we need to initialize a trigger channel?
+        
     case 'NYU-ECOG'
         % Set up triggers via audio cable
         fs = 16000;

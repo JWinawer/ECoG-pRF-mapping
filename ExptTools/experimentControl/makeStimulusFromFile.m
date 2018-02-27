@@ -5,7 +5,7 @@ function stimulus = makeStimulusFromFile(params)
 
 % Check whether loadMatrix exists
 if ~isfield(params, 'loadMatrix'), error('No loadMatrix to load'); end
-stimPath = fullfile(vistadispRootPath, 'StimFiles', params.loadMatrix);
+    stimPath = fullfile(vistadispRootPath, 'StimFiles', params.loadMatrix);
 if ~exist(stimPath, 'file'), error('Cannot locate stim file %s.', stimPath); end
 
 % Load the stimulus from a stored file
@@ -14,7 +14,7 @@ tmp = load(stimPath, 'stimulus');
 if isfield(tmp, 'stimulus'),  stimulus = tmp.stimulus;    
 else,                         stimulus = tmp;  end
 
-% clear textures field if it extists. textures will be remade lated
+% clear textures field if it exists. textures will be remade later
 if isfield(stimulus, 'textures'), stimulus = rmfield(stimulus, 'textures'); end
 
 %% fixation dot sequence
