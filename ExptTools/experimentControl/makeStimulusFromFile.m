@@ -18,7 +18,7 @@ else,                         stimulus = tmp;  end
 if isfield(stimulus, 'textures'), stimulus = rmfield(stimulus, 'textures'); end
 
 %% fixation dot sequence
-% change on the fastest every 6 seconds
+
 if isfield(stimulus, 'fixSeq') && ~isempty(stimulus.fixSeq)
     % Check that fixation length is at least as long as stimulus length,
     % otherwise we will have an error
@@ -28,16 +28,25 @@ if isfield(stimulus, 'fixSeq') && ~isempty(stimulus.fixSeq)
     end
     % use it
 else
-    % make up a fixation sequence    
-    duration.stimframe  = median(diff(stimulus.seqtiming));
-    minsec = round(6./duration.stimframe);
     
-    fixSeq = ones(minsec,1)*round(rand(1,ceil(length(stimulus.seq)/minsec)));
-    fixSeq = fixSeq(:)+1;
-    
-    % force binary
-    fixSeq(fixSeq>2)=2;
-    fixSeq(fixSeq<1)=1;
-
+    % Generate a fixation sequence
+    minDurationInSeconds = 1;
+    maxDurationInSeconds = 5;
+    dwellTimePerImage    = median(diff(stimulus.seqtiming)); % temporal resolution in seq timing
+    fixSeq = createFixationSequence(stimulus, dwellTimePerImage, minDurationInSeconds, maxDurationInSeconds);
     stimulus.fixSeq = fixSeq;
+    
+%     % change on the fastest every 6 seconds
+%     duration.stimframe  = median(diff(stimulus.seqtiming));
+%     minsec = round(6./duration.stimframe);
+%     
+%     fixSeq = ones(minsec,1)*round(rand(1,ceil(length(stimulus.seq)/minsec)));
+%     fixSeq = fixSeq(:)+1;
+%     
+%     % force binary
+%     fixSeq(fixSeq>2)=2;
+%     fixSeq(fixSeq<1)=1;
+% 
+%     stimulus.fixSeq = fixSeq;
+
 end

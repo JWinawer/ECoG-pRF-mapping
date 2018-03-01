@@ -91,7 +91,7 @@ try
     % Save
     pth = fullfile(vistadispRootPath, 'Data');
     
-    fname = sprintf('%s_%s_%s_%s', params.subjID, params.experiment, params.site, datestr(now,30));
+    fname = sprintf('sub-%s_ses-%s_task-%s_run-%d_%s', params.subjID, params.site, params.experiment, params.runID, datestr(now,30));
     
     save(fullfile(pth, sprintf('%s.mat', fname)));
     
