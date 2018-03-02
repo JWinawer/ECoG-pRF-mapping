@@ -30,7 +30,7 @@ ListenChar(2);
 % the ones we are using are loaded.
 KbCheck;GetSecs;WaitSecs(0.001);
 
-try
+% try
     % check for OpenGL
     AssertOpenGL;
     
@@ -123,19 +123,19 @@ try
         movefile(fullfile(pth, 'eyelink.edf'), [destination num2str(i) '.edf']);
     end
 
-catch ME
-    % Clean up if error occurred
-    if params.useSerialPort
-        deviceUMC('close', params.siteSpecific.port);
-    end
-    if params.useEyeTracker
-        PTBStopEyeTrackerRecording; 
-    end
-    Screen('CloseAll');
-    ListenChar(1)
-    setGamma(0); Priority(0); ShowCursor;
-    warning(ME.identifier, '%s', ME.message);
-end
+% catch ME
+%     % Clean up if error occurred
+%     if params.useSerialPort
+%         deviceUMC('close', params.siteSpecific.port);
+%     end
+%     if params.useEyeTracker
+%         PTBStopEyeTrackerRecording; 
+%     end
+%     Screen('CloseAll');
+%     ListenChar(1)
+%     setGamma(0); Priority(0); ShowCursor;
+%     warning(ME.identifier, '%s', ME.message);
+% end
 
 return;
 
