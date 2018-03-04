@@ -1,7 +1,0 @@
-# This directory is for text files specifying experiments to run. The contents of the directory are not synced to the remote repository, but the directory is on the path. 
-*.txt
-*~
-*.m~
-*.m
-*.DS_Store
-
