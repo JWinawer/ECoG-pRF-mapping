@@ -3,10 +3,8 @@ function quitProg = doExperiment(params)
 %
 % quitProg = doExperiment(params)
 
-
 % Set screen params
 params = setScreenParams(params);
-
 
 % Site-specific settings
 params = initializeSiteSpecificEnvironment(params);
@@ -15,7 +13,7 @@ params = initializeSiteSpecificEnvironment(params);
 stimulus = makeStimulusFromFile(params);
 
 % Set fixation params
-params = setFixationParams(params, stimulus);
+params   = setFixationParams(params, stimulus);
 
 % WARNING! ListChar(2) enables Matlab to record keypresses while disabling
 % output to the command window or editor window. This is good for running
@@ -131,9 +129,9 @@ catch ME
     end
     Screen('CloseAll');
     ListenChar(1)
-    setGamma(0); Priority(0); ShowCursor;
-    warning(ME.identifier, '%s', ME.message);
+    setGamma(0); Priority(0); ShowCursor;    
     quitProg = true;
+    rethrow(ME);
 end
 
 return;

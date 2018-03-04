@@ -184,11 +184,6 @@ try
     % Set a default background- users will probably want to over ride this.
     displayID.backColorRgb = [repmat(round(displayID.maxRgbValue/2),1,3) displayID.maxRgbValue];
     displayID.textColorRgb = repmat(displayID.maxRgbValue,1,4);
-    displayID.fixType = 'disk';
-    displayID.fixSizePixels = 3;
-    displayID.fixColorRgb = [displayID.maxRgbValue 0 0 displayID.maxRgbValue];
-    displayID.fixX = round(displayID.numPixels(1)/2);
-    displayID.fixY = round(displayID.numPixels(2)/2);
 
     % Load gamma table
     if exist(fullfile(displayPath,'gamma.mat'),'file')
