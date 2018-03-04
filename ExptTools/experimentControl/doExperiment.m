@@ -1,21 +1,21 @@
-function doExperiment(params)
+function quitProg = doExperiment(params)
 % doExperiment - runs ECoG, MEG, EEG, or fMRI experiment
 %
-% doExperiment(params)
+% quitProg = doExperiment(params)
+
 
 % Set screen params
 params = setScreenParams(params);
 
+
 % Site-specific settings
 params = initializeSiteSpecificEnvironment(params);
 
-% defaults
-if ~exist('params', 'var'), error('No parameters specified!'); end
-
-% make/load stimulus
+% Load stimulus
 stimulus = makeStimulusFromFile(params);
 
-fprintf('[%s]: Experiment duration (seconds): %6.3f\n', mfilename, stimulus.seqtiming(end))
+% Set fixation params
+params = setFixationParams(params, stimulus);
 
 % WARNING! ListChar(2) enables Matlab to record keypresses while disabling
 % output to the command window or editor window. This is good for running
@@ -54,11 +54,6 @@ try
           % Q How is the path to the log files set?
     end
     
-    % Reset Fixation parameters if needed (ie if the dimensions of the
-    % screen after opening do not match the dimensions specified in the
-    % calibration file)
-    params = setFixationParams(params);
-    
     % to allow blending
     Screen('BlendFunction', params.display.windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
@@ -69,39 +64,42 @@ try
     Priority(params.runPriority);
     
     % wait for go signal
-    time0 = pressKey2Begin(params);
+    [time0, quitProg] = pressKey2Begin(params); 
+    
+    if ~quitProg
+        % Do the experiment!
+        if isfield(params, 'modality') && strcmpi(params.modality, 'fMRI')
+            timeFromT0 = true;
+        else, timeFromT0 = false;
+        end
         
-    %% Do the experiment!
-    if isfield(params, 'modality') && strcmpi(params.modality, 'fMRI')
-        timeFromT0 = true;
-    else, timeFromT0 = false;
+        [response, timing, quitProg] = showScanStimulus(params,stimulus,time0, timeFromT0); %#ok<ASGLU> timing and quitProg key are saved (but not otherwise used)
+        
+        % After experiment
+        
+        % Reset priority
+        Priority(0);
+        
+        % Get performance
+        [pc,rc] = getFixationPerformance(params.fix,stimulus,response);
+        fprintf('[%s]: percent correct: %.1f\nreaction time: %.1f secs\n',mfilename,pc,rc);
+        
+        % Save
+        pth = fullfile(vistadispRootPath, 'Data');
+        
+        fname = sprintf('sub-%s_ses-%s_task-%s_run-%d_%s', params.subjID, params.site, params.experiment, params.runID, datestr(now,30));
+        
+        save(fullfile(pth, sprintf('%s.mat', fname)));
+        
+        fprintf('[%s]:Saving in %s.\n', mfilename, fullfile(pth, fname));
+        
+        if any(contains(fieldnames(stimulus), 'tsv'))
+            writetable(stimulus.tsv, fullfile(pth, sprintf('%s.tsv', fname)), ...
+                'FileType','text', 'Delimiter', '\t')
+        end
+   
     end
-
-    [response, timing, quitProg] = showScanStimulus(params,stimulus,time0, timeFromT0); %#ok<ASGLU>
     
-    %% After experiment
-    
-    % Reset priority
-    Priority(0);
-    
-    % Get performance
-    [pc,rc] = getFixationPerformance(params.fix,stimulus,response);
-    fprintf('[%s]: percent correct: %.1f\nreaction time: %.1f secs\n',mfilename,pc,rc);
-    
-    % Save
-    pth = fullfile(vistadispRootPath, 'Data');
-    
-    fname = sprintf('sub-%s_ses-%s_task-%s_run-%d_%s', params.subjID, params.site, params.experiment, params.runID, datestr(now,30));
-    
-    save(fullfile(pth, sprintf('%s.mat', fname)));
-    
-    fprintf('[%s]:Saving in %s.\n', mfilename, fullfile(pth, fname));
-    
-    if any(contains(fieldnames(stimulus), 'tsv'))
-        writetable(stimulus.tsv, fullfile(pth, sprintf('%s.tsv', fname)), ...
-            'FileType','text', 'Delimiter', '\t')
-    end
-     
     % Close the one on-screen and many off-screen windows
     closeScreen(params.display);
     ListenChar(1)
@@ -135,14 +133,7 @@ catch ME
     ListenChar(1)
     setGamma(0); Priority(0); ShowCursor;
     warning(ME.identifier, '%s', ME.message);
+    quitProg = true;
 end
 
 return;
-
-
-
-
-
-
-
-

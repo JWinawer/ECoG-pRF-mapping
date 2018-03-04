@@ -1,7 +1,7 @@
-function [output t0] = deviceUMC(command,port)
+function [output, t0] = deviceUMC(command,port)
 % deviceUMC - read UMC scanner trigger and subject response box
 %
-% output = deviceUMC(command)
+% [output, t0] = deviceUMC(command)
 %
 % commands: 'open'  - opens the communication line
 %           'check' - open, report on and close all available ports

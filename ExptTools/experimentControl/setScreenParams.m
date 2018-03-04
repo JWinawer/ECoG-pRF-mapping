@@ -13,7 +13,6 @@ if max(Screen('screens')) < params.display.screenNumber
 end
 
 params.quitProgKey          = 'q';
-params.display.quitProgKey  = params.quitProgKey;
 
 end
 

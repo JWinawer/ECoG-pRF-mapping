@@ -46,7 +46,11 @@ switch params.site
             params.siteSpecific.port = -1; % deviceUMC('open',portName);
         
         end
-
+        
+        if strcmp(params.site, 'UMC-7T')
+            params.display.verticalOffset = 0; % pixels (positive means move the box higher)
+        end 
+        
     otherwise
         % do nothing
 end

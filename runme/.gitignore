@@ -1,7 +1,5 @@
-# This directory is for .m scripts to run experiments. The contents of the directory are 
-# not synced to the remote repository, but the directory is on the path. It is a useful 
-# location to put me files of the form runme_DATE_EXPNAME.m etc for running vistadisp
-# experiments.
+# This directory is for text files specifying experiments to run. The contents of the directory are not synced to the remote repository, but the directory is on the path. 
+*.txt
 *~
 *.m~
 *.m

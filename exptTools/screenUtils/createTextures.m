@@ -18,52 +18,22 @@ function stimulus = createTextures(display, stimulus)
 %2005/06/09   SOD: ported from createImagePointers
 %31102005    fwc:	changed display.screenNumber into display.windowPtr
 
-for stimNum = 1:length(stimulus)
+
+% number of images
+nImages = size(stimulus.images,3);
+stimulus.textures = zeros(nImages, 1);
+
+% make textures
+for imgNum = 1:nImages
     
-    % if stored as cell?!
-    % maybe everything should be cell based and not based on the 3 image
-    % dimension - this would allow easy support for rgb images
-    if iscell(stimulus(stimNum).images)
-        stimulus(stimNum).images = cell2mat(stimulus(stimNum).images);
-    end
-    
-    % number of images
-    nImages = size(stimulus(stimNum).images,3);
-    
-    % make Rects
-    stimulus(stimNum).srcRect = [0,0,size(stimulus(stimNum).images, 2), ...
-        size(stimulus(stimNum).images, 1)];
-    if ~isfield(display,'destRect')
-        stimulus(stimNum).destRect = CenterRect(stimulus(stimNum).srcRect, display.rect);
-    else
-        stimulus(stimNum).destRect = CenterRect(display.destRect, display.rect);
-    end
-    % clean up nicely if any of the textures are not null.
-    if isfield(stimulus(stimNum), 'textures')
-        nonNull = find(stimulus(stimNum).textures);
-        for i=1:length(nonNull)
-            % run this from eval to suppress any errors that might ensue if the texture isn't valid
-            % converted eval to try, as two argument use of eval is now deprecated (jw)
-            try
-                Screen(stimulus(stimNum).textures(nonNull(i)), 'Close');
-            end
-        end
-    end
-    stimulus(stimNum).textures = zeros(nImages, 1);
-    
-    % make textures
-    for imgNum = 1:nImages
-            
-        % fwc:	changed display.screenNumber into display.windowPtr
-        stimulus(stimNum).textures(imgNum) = ...
-            Screen('MakeTexture',display.windowPtr, ...
-            double(squeeze(stimulus(stimNum).images(:,:,imgNum,:))));  
-    end
-    
+    % fwc:	changed display.screenNumber into display.windowPtr
+    stimulus.textures(imgNum) = ...
+        Screen('MakeTexture',display.windowPtr, ...
+        double(squeeze(stimulus.images(:,:,imgNum,:))));
 end
 
 % call/load 'DrawTexture' prior to actual use (clears overhead)
 Screen('DrawTexture', display.windowPtr, stimulus(1).textures(1), ...
-    stimulus(1).srcRect, stimulus(1).destRect);
+    stimulus(1).srcRect, stimulus(1).dstRect);
 
 return

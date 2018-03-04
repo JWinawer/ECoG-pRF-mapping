@@ -1,5 +1,0 @@
-hrfpattern_1
-spatialpattern_1
-spatialpattern_2
-spatialpattern_3
-spatialpattern_4
