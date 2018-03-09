@@ -80,13 +80,42 @@ try
         
         % Get performance
         [pc,rc] = getFixationPerformance(params.fix,stimulus,response);
+        
         fprintf('[%s]: percent correct: %.1f\nreaction time: %.1f secs\n',mfilename,pc,rc);
         
         % Save
+        
+        % Save path
         pth = fullfile(vistadispRootPath, 'Data');
+       
+        % Get current date and time
+        params.experimentDateandTime = datestr(now,30); 
+        % This used to be in the filename but was removed because of BIDS
+        % requirements; now saving it along with the other variables 
         
-        fname = sprintf('sub-%s_ses-%s_task-%s_run-%d_%s', params.subjID, params.site, params.experiment, params.runID, datestr(now,30));
+        % Include a runNumber field to indicate if this is a repeat run
+        params.runNumber = params.runID;
+        % This number will be updated below if previous instantiations of
+        % this run exist in the folder where the data is saved.
+       
+        % Generate save name using BIDS naming convention:exclude runNumber
+        tempname = sprintf('sub-%s_ses-%s%s_task-%s_run-*.mat', ...
+            params.subjID, params.site, params.sessionID, params.experiment);
         
+        % Check if runNumber already exists
+        D = dir(fullfile(pth, tempname));
+        if length(D) > params.runNumber
+            % Update params.runNumber to not overwrite existing file [Note
+            % that params.runID and the tsv stim_file will still refer to
+            % the identity of the stimfile that was loaded for this run]
+            params.runNumber = length(D)+1;
+        end
+        
+        % Generate save name using BIDS naming convention:include runNumber
+        fname = sprintf('sub-%s_ses-%s%s_task-%s_run-%d', ...
+            params.subjID, params.site, params.sessionID, params.experiment, params.runNumber);
+            
+        % Everything in the workspace will be saved
         save(fullfile(pth, sprintf('%s.mat', fname)));
         
         fprintf('[%s]:Saving in %s.\n', mfilename, fullfile(pth, fname));
