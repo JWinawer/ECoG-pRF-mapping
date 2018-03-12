@@ -145,7 +145,7 @@ try
             i = i + 1;
         end
         %movefile('eyelink.edf', [destination num2str(i) '.edf'])
-        movefile(fullfile(pth, 'eyelink.edf'), [destination num2str(i) '.edf']);
+        movefile('eyelink.edf', fullfile(pth, [destination num2str(i) '.edf']));
     end
 
 catch ME
