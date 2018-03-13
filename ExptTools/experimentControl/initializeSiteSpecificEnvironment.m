@@ -50,6 +50,26 @@ switch params.site
         if strcmp(params.site, 'UMC7T')
             params.display.verticalOffset = 0; % pixels (positive means move the box higher)
         end 
+     
+    case 'UMCECOG'
+        
+        % ADD IN PORT INITIALIZATION CODE FOR ECOG HERE
+        
+          % First, find the serial port
+        portName = FindSerialPort([],1,1);
+        
+        % Open serial port 
+        if ~isempty(portName)
+
+            params.siteSpecific.port = deviceUMC('open',portName);
+        
+        else
+            
+            % For testing on a computer without a serial port, deviceUMC.m
+            % can take a negative number as portname input and still run
+            params.siteSpecific.port = -1; % deviceUMC('open',portName);
+        
+        end
         
     otherwise
         % do nothing
