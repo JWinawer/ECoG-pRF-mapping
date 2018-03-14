@@ -133,7 +133,15 @@ try
     
     % Close site-specific functionalities
     if params.useSerialPort
-        deviceUMC('close', params.siteSpecific.port);
+        switch params.site
+            
+            case {'UMC7T' 'UMC3T'}
+                deviceUMC('close', params.siteSpecific.port);
+                
+            case 'UMCECOG'
+                fclose(params.siteSpecific.port);
+                
+        end
     end
     if params.useEyeTracker
         PTBStopEyeTrackerRecording; % <----------- (can take a while)
@@ -151,7 +159,15 @@ try
 catch ME
     % Clean up if error occurred
     if params.useSerialPort
-        deviceUMC('close', params.siteSpecific.port);
+        switch params.site
+            
+            case {'UMC7T' 'UMC3T'}
+                deviceUMC('close', params.siteSpecific.port);
+                
+            case 'UMCECOG'
+                fclose(params.siteSpecific.port);
+                
+        end
     end
     if params.useEyeTracker
         PTBStopEyeTrackerRecording; 
