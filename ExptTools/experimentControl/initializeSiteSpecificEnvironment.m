@@ -53,15 +53,15 @@ switch params.site
      
     case 'UMCECOG'
         
-        % ADD IN PORT INITIALIZATION CODE FOR ECOG HERE
+        COM_PORT = 'COM6';
         
-          % First, find the serial port
-        portName = FindSerialPort([],1,1);
+        % First, find the serial port
         
         % Open serial port 
-        if ~isempty(portName)
-
-            params.siteSpecific.port = deviceUMC('open',portName);
+        if ~isempty(COM_PORT)
+            portName = serial(COM_PORT);  % works with serial, not IOPort
+            fopen(portName);
+            params.siteSpecific.port = portName;
         
         else
             
