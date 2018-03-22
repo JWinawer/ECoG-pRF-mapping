@@ -53,6 +53,10 @@ switch params.site
      
     case 'UMCECOG'
         
+        % necessary to run the correct mex files on windows for
+        % psychtoolbox
+        fix_psychtoolbox_path();
+        
         COM_PORT = 'COM6';
         
         % First, find the serial port
