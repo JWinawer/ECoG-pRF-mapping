@@ -115,12 +115,20 @@ try
         fname = sprintf('sub-%s_ses-%s%s_task-%s_run-%d', ...
             params.subjID, params.site, params.sessionID, params.experiment, params.runNumber);
             
-        % Everything in the workspace will be saved
+        % Everything in the workspace will be saved!
         save(fullfile(pth, sprintf('%s.mat', fname)));
         
         fprintf('[%s]:Saving in %s.\n', mfilename, fullfile(pth, fname));
         
+        % Write out the tsv file
         if any(contains(fieldnames(stimulus), 'tsv'))
+            % Replace pointer to input stimfile with output stimfile
+            % NOTE: to comply with BIDS compatible file structure, the
+            % output stimfiles (extension.mat) should be placed in a
+            % 'stimuli' folder within the project folder (above the
+            % subjects/session levels)
+            numberOfEventsPerRun = size(stimulus.tsv,1);
+            stimulus.tsv.stim_file = repmat(sprintf('%s.mat', fname), numberOfEventsPerRun,1);
             writetable(stimulus.tsv, fullfile(pth, sprintf('%s.tsv', fname)), ...
                 'FileType','text', 'Delimiter', '\t')
         end
