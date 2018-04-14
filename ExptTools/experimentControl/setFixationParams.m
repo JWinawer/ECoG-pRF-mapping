@@ -8,7 +8,7 @@ params.display.fixX = (stimulus.dstRect(1)+stimulus.dstRect(3))/2;
 params.display.fixY = (stimulus.dstRect(2)+stimulus.dstRect(4))/2;
 
 % Fixation size in visual angle and in pixels
-params.display.fixSizeAngle  = 0.15;
+params.display.fixSizeAngle  = 0.30;
 params.display.fixSizePixels = round(angle2pix(params.display,params.display.fixSizeAngle));
 
 % Default colors are red and green ([R G B Alpha])
@@ -31,6 +31,14 @@ switch lower(params.fixation)
             0 145 0 192;
             0 145 0 128;
             ];                       
+
+        params.display.fixColorRgb  = ...
+            [255 0 0 255;
+            0 0 0 255;
+            0 255 0 255;
+            0 0 0 255;
+            ];          
+        
         
     case 'cross'        
         

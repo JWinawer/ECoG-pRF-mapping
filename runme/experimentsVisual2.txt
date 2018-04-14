@@ -4,3 +4,5 @@ spatialobject_1
 spatialobject_2
 temporalpattern_1
 temporalpattern_2
+dottask_1
+dottask_2

@@ -29,6 +29,9 @@ ListenChar(2);
 KbCheck;GetSecs;WaitSecs(0.001);
 
 try
+    % Turn off screen warnings
+    Screen('Preference','VisualDebugLevel', 0);
+    
     % check for OpenGL
     AssertOpenGL;
     
