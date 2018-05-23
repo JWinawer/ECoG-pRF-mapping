@@ -117,7 +117,14 @@ for frame = 1:nFrames
                     break; % out of while loop
                     
                 case params.triggerKey
-                    % do nothing as this is the trigger key from the scanner
+                    switch params.site
+                        case {'NYU3T'}
+                            % do nothing as this is the trigger key from the scanner
+                        otherwise
+                             % record the subject response
+                            response.keyCode(frame) = str;
+                            response.secs(frame)    = ssSecs - t0;  
+                    end
                     
                 otherwise
                     % record the subject response
