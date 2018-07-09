@@ -117,7 +117,14 @@ for frame = 1:nFrames
                     break; % out of while loop
                     
                 case params.triggerKey
-                    % do nothing as this is the trigger key from the scanner
+                    switch params.site
+                        case {'NYU3T'}
+                            % do nothing as this is the trigger key from the scanner
+                        otherwise
+                             % record the subject response
+                            response.keyCode(frame) = str;
+                            response.secs(frame)    = ssSecs - t0;  
+                    end
                     
                 otherwise
                     % record the subject response
@@ -147,16 +154,16 @@ for frame = 1:nFrames
     % Send trigger, if requested (if stimulus.trigSeq > 0)
     if isfield(stimulus, 'trigSeq') && ~isempty(stimulus.trigSeq) && ...
             stimulus.trigSeq(frame) > 0
-        switch params.site
-            case 'NYUECOG'
+        switch lower(params.site)
+            case 'nyuecog'
                 PsychPortAudio('Start', params.siteSpecific.AudPnt, 1, 0);
-            case 'NYUMEG'
+            case 'nyumeg'
                 PTBSendTrigger(stimulus.trigSeq(frame), 0);
-            case 'NYUEEG' % in case we ever decide to do EEG....
+            case 'nyueeg' % in case we ever decide to do EEG....
                 % NetStation('Event','flip',VBLTimestamp);
                 thisCode = sprintf('%4.0d', stimulus.trigSeq(frame));
                 NetStation('Event', thisCode,VBLTimestamp);
-            case 'UMCECOG'
+            case 'umcecog'
                 fprintf(params.siteSpecific.port, '%c', stimulus.trigSeq(frame));
         end
     end

@@ -101,13 +101,13 @@ try
         % This number will be updated below if previous instantiations of
         % this run exist in the folder where the data is saved.
        
-        % Generate save name using BIDS naming convention:exclude runNumber
+        % Generate save name using BIDS naming convention: exclude runNumber
         tempname = sprintf('sub-%s_ses-%s%s_task-%s_run-*.mat', ...
             params.subjID, params.site, params.sessionID, params.experiment);
         
         % Check if runNumber already exists
         D = dir(fullfile(pth, tempname));
-        if length(D) > params.runNumber
+        if length(D) >= params.runNumber
             % Update params.runNumber to not overwrite existing file [Note
             % that params.runID and the tsv stim_file will still refer to
             % the identity of the stimfile that was loaded for this run]
@@ -144,12 +144,12 @@ try
     
     % Close site-specific functionalities
     if params.useSerialPort
-        switch params.site
+        switch lower(params.site)
             
-            case {'UMC7T' 'UMC3T'}
+            case {'umc7t' 'umc3t'}
                 deviceUMC('close', params.siteSpecific.port);
                 
-            case 'UMCECOG'
+            case 'umcecog'
                 fclose(params.siteSpecific.port);
                 
         end
@@ -170,12 +170,12 @@ try
 catch ME
     % Clean up if error occurred
     if params.useSerialPort
-        switch params.site
+        switch lower(params.site)
             
-            case {'UMC7T' 'UMC3T'}
+            case {'umc7t' 'umc3t'}
                 deviceUMC('close', params.siteSpecific.port);
                 
-            case 'UMCECOG'
+            case 'umcecog'
                 fclose(params.siteSpecific.port);
                 
         end

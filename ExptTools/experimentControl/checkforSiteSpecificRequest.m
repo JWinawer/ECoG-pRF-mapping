@@ -1,7 +1,7 @@
 function checkforSiteSpecificRequest(experimentSpecs,whichSite)
 
-switch experimentSpecs.sites{whichSite}
-    case 'NYUECOG'
+switch lower(experimentSpecs.sites{whichSite})
+    case 'nyuecog'
         % calibrate display
         NYU_ECOG_Cal();        
         % Check paths

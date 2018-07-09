@@ -1,7 +1,7 @@
 function params = initializeSiteSpecificEnvironment(params)
 
-switch params.site
-    case 'NYUMEG'
+switch lower(params.site)
+    case 'nyumeg'
         
         % Initialize eye tracker
         
@@ -11,7 +11,7 @@ switch params.site
 
         % Q do we need to initialize a trigger channel?
         
-    case 'NYUECOG'
+    case 'nyuecog'
         % Set up triggers via audio cable
         fs = 16000;
         InitializePsychSound;
@@ -28,7 +28,7 @@ switch params.site
         PsychPortAudio('FillBuffer', AudPnt,wavdata');
         params.siteSpecific.AudPnt = AudPnt;
         
-    case {'UMC7T' 'UMC3T'}
+    case {'umc7t' 'umc3t'}
         % Initialize the serial port for UMC
         
         % First, find the serial port
@@ -47,11 +47,11 @@ switch params.site
         
         end
         
-        if strcmp(params.site, 'UMC7T')
+        if strcmp(params.site, 'umc7t')
             params.display.verticalOffset = 0; % pixels (positive means move the box higher)
         end 
      
-    case 'UMCECOG'
+    case 'umcecog'
         
         % necessary to run the correct mex files on windows for
         % psychtoolbox
