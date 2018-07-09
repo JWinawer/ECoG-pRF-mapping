@@ -144,12 +144,12 @@ try
     
     % Close site-specific functionalities
     if params.useSerialPort
-        switch params.site
+        switch lower(params.site)
             
-            case {'UMC7T' 'UMC3T'}
+            case {'umc7t' 'umc3t'}
                 deviceUMC('close', params.siteSpecific.port);
                 
-            case 'UMCECOG'
+            case 'umcecog'
                 fclose(params.siteSpecific.port);
                 
         end
@@ -170,12 +170,12 @@ try
 catch ME
     % Clean up if error occurred
     if params.useSerialPort
-        switch params.site
+        switch lower(params.site)
             
-            case {'UMC7T' 'UMC3T'}
+            case {'umc7t' 'umc3t'}
                 deviceUMC('close', params.siteSpecific.port);
                 
-            case 'UMCECOG'
+            case 'umcecog'
                 fclose(params.siteSpecific.port);
                 
         end
