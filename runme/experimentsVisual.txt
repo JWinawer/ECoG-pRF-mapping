@@ -1,9 +1,0 @@
-hrfpattern_1
-prf_1
-prf_2
-spatialpattern_1
-spatialpattern_2
-spatialobject_1
-spatialobject_2
-temporalpattern_1
-temporalpattern_2

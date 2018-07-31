@@ -6,9 +6,6 @@ function quitProg = doExperiment(params)
 % Set screen params
 params = setScreenParams(params);
 
-% Site-specific settings
-params = initializeSiteSpecificEnvironment(params);
-
 % Load stimulus
 stimulus = makeStimulusFromFile(params);
 
@@ -40,21 +37,7 @@ try
     % Open the screen
     params.display = openScreen(params.display);
     
-    if params.useEyeTracker
-          global PTBTheWindowPtr
-          PTBTheWindowPtr = params.display.windowPtr;
-     
-          PTBInitEyeTracker;
-          % paragraph = {'Eyetracker initialized.','Get ready to calibrate.'};
-          % PTBDisplayParagraph(paragraph, {'center',30}, {'a'});
-          PTBCalibrateEyeTracker;
-    
-          % actually starts the recording
-          % name correponding to MEG file (can only be 8 characters!!, no extension)
-          PTBStartEyeTrackerRecording('eyelink');
-          % Q How is the path to the log files set?
-    end
-    
+        
     % to allow blending
     Screen('BlendFunction', params.display.windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
@@ -89,7 +72,7 @@ try
         % Save
         
         % Save path
-        pth = fullfile(vistadispRootPath, 'Data');
+        pth = fullfile(ecogPRFRootPath, 'Data');
        
         % Get current date and time
         params.experimentDateandTime = datestr(now,30); 
@@ -141,48 +124,9 @@ try
     % Close the one on-screen and many off-screen windows
     closeScreen(params.display);
     ListenChar(1)
-    
-    % Close site-specific functionalities
-    if params.useSerialPort
-        switch lower(params.site)
-            
-            case {'umc7t' 'umc3t'}
-                deviceUMC('close', params.siteSpecific.port);
-                
-            case 'umcecog'
-                fclose(params.siteSpecific.port);
-                
-        end
-    end
-    if params.useEyeTracker
-        PTBStopEyeTrackerRecording; % <----------- (can take a while)
-        
-        % move the file to the logs directory
-        destination = 'eyelink';
-        i = 0;
-        while exist([destination num2str(i) '.edf'], 'file')
-            i = i + 1;
-        end
-        %movefile('eyelink.edf', [destination num2str(i) '.edf'])
-        movefile('eyelink.edf', fullfile(pth, [destination num2str(i) '.edf']));
-    end
-
+      
 catch ME
     % Clean up if error occurred
-    if params.useSerialPort
-        switch lower(params.site)
-            
-            case {'umc7t' 'umc3t'}
-                deviceUMC('close', params.siteSpecific.port);
-                
-            case 'umcecog'
-                fclose(params.siteSpecific.port);
-                
-        end
-    end
-    if params.useEyeTracker
-        PTBStopEyeTrackerRecording; 
-    end
     Screen('CloseAll');
     ListenChar(1)
     setGamma(0); Priority(0); ShowCursor;    
