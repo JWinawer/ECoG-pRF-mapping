@@ -1,4 +1,4 @@
-function [subjID, sessionID, ssDefined] = bairWhichSubjectandSession
+function [subjID, sessionID, ssDefined] = whichSubjectandSession
 
 prompt = {'Enter subject ID', 'Enter session number'};
 defaults = {'test', '01'};

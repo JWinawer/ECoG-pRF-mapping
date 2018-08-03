@@ -84,21 +84,7 @@ for frame = 1:nFrames
     waitTime = getWaitTime(stimulus, response, frame,  t0, timeFromT0);
     
     %--- get inputs (subject or experimentor)
-    while(waitTime<0)
-        
-        % Check for serial port if we are at UMC-3T or UMC-7T
-        switch params.site
-            case {'UMC3T' 'UMC7T'}
-                
-                % At these sites, the subject response is sent through a
-                % serial port which KbCheck cannot read, so we use
-                % PsychToolbox' IOPort
-                [output, ssSecs] = deviceUMC('button', params.siteSpecific.port);
-                if output > 49 % 49 is the UMC trigger code; button responses are 65-68.
-                    response.keyCode(frame) = output;
-                    response.secs(frame)    = ssSecs - t0;
-                end
-        end
+    while(waitTime<0)              
         
         % Scan the keyboard for subject response
         [ssKeyIsDown,ssSecs,ssKeyCode] = KbCheck(-1);
@@ -115,17 +101,7 @@ for frame = 1:nFrames
                     % Quit the experiment gracefully
                     quitProg = 1;
                     break; % out of while loop
-                    
-                case params.triggerKey
-                    switch params.site
-                        case {'NYU3T'}
-                            % do nothing as this is the trigger key from the scanner
-                        otherwise
-                             % record the subject response
-                            response.keyCode(frame) = str;
-                            response.secs(frame)    = ssSecs - t0;  
-                    end
-                    
+                                        
                 otherwise
                     % record the subject response
                     response.keyCode(frame) = str;
@@ -134,9 +110,7 @@ for frame = 1:nFrames
         end
         
         % if there is time release cpu
-        if(waitTime<-0.02)
-            WaitSecs(0.01);
-        end
+        if(waitTime<-0.02), WaitSecs(0.01); end
         
         % timing
         waitTime = getWaitTime(stimulus, response, frame, t0, timeFromT0);
@@ -151,23 +125,12 @@ for frame = 1:nFrames
     %--- update screen
     VBLTimestamp = Screen('Flip',display.windowPtr);
     
-    % Send trigger, if requested (if stimulus.trigSeq > 0)
-    if isfield(stimulus, 'trigSeq') && ~isempty(stimulus.trigSeq) && ...
-            stimulus.trigSeq(frame) > 0
-        switch lower(params.site)
-            case 'nyuecog'
-                PsychPortAudio('Start', params.siteSpecific.AudPnt, 1, 0);
-            case 'nyumeg'
-                PTBSendTrigger(stimulus.trigSeq(frame), 0);
-            case 'nyueeg' % in case we ever decide to do EEG....
-                % NetStation('Event','flip',VBLTimestamp);
-                thisCode = sprintf('%4.0d', stimulus.trigSeq(frame));
-                NetStation('Event', thisCode,VBLTimestamp);
-            case 'umcecog'
-                fprintf(params.siteSpecific.port, '%c', stimulus.trigSeq(frame));
-        end
+    % Send trigger    
+    if stimulus.trigSeq(frame)
+        % replace this line with a line to send the trigger: 
+        fprintf('Trigger %d\n', stimulus.trigSeq(frame));
     end
-    
+        
     % Record the flip time
     response.flip(frame) = VBLTimestamp;
 end
