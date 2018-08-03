@@ -15,17 +15,9 @@ params.site             = 'Stanford';
 params.calibration      = 'SoMMacBook';
 params.triggerKey       = '5';
 params.fixation         = 'cross';
-
-% Additional parameters 
+params.runPriority      = 2;
 params.prescanDuration  = 0;
 params.startScan        = 0;
-
-% Set priority (depends on operating system)
-if ispc
-    params.runPriority  = 2;
-elseif ismac
-    params.runPriority  = 7;
-end
 
 % Debug mode?
 params.skipSyncTests = 1;
