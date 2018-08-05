@@ -11,7 +11,7 @@ params.runID            = 1;
 params.sessionID        = sessionID;
 params.modality         = 'ECoG';
 params.site             = 'Stanford';
-params.calibration      = 'SoMMacBook';
+params.calibration      = 'ParviziLaptop';
 params.loadMatrix       = 'pRF_experiment';
 params.triggerKey       = '5';
 params.fixation         = 'cross';
@@ -20,7 +20,7 @@ params.prescanDuration  = 0;
 params.startScan        = 0;
 
 % Debug mode?
-params.skipSyncTests = 0;
+params.skipSyncTests = 1;
 
 % Go!
 doExperiment(params);

@@ -48,8 +48,6 @@ if nargin < 3 || isempty(t0)
     t0 = GetSecs; % "time 0" to keep timing going
 end
 
-if notDefined('timeFromT0'), timeFromT0 = true; end
-
 % Get the display parameters
 display = params.display;
 
@@ -128,7 +126,7 @@ for frame = 1:nFrames
     % Send trigger    
     if stimulus.trigSeq(frame)
         % replace this line with a line to send the trigger: 
-        fprintf('Trigger %d\n', stimulus.trigSeq(frame));
+        fprintf('Trigger %d %5.4f\n ', stimulus.trigSeq(frame), VBLTimestamp-t0);
     end
         
     % Record the flip time
@@ -152,6 +150,7 @@ function waitTime = getWaitTime(stimulus, response, frame, t0, timeFromT0)
 % last screen flip time is equal to the desired difference in the
 % presentation time of the current flip and the prior flip.
 
+slopTime = 0.010;
 if timeFromT0
     waitTime = (GetSecs-t0)-stimulus.seqtiming(frame);
 else
@@ -168,5 +167,5 @@ else
     % monitor is greater than 100 Hz, this might make you a frame
     % early. [So consider going to down to 5 ms? What is the minimum we
     % need to ensure that we are not a frame late?]
-    waitTime = (GetSecs-lastFlip)-desiredWaitTime + .010;
+    waitTime = (GetSecs-lastFlip)-desiredWaitTime + slopTime;
 end

@@ -52,11 +52,7 @@ try
     
     if ~quitProg
         % Do the experiment!
-        if isfield(params, 'modality') && strcmpi(params.modality, 'fMRI')
-            timeFromT0 = true;
-        else, timeFromT0 = false;
-        end
-        
+        timeFromT0 = true;        
         [response, timing, quitProg] = showScanStimulus(params,stimulus,time0, timeFromT0); %#ok<ASGLU> timing and quitProg key are saved (but not otherwise used)
         
         % After experiment
