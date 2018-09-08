@@ -125,8 +125,8 @@ for frame = 1:nFrames
     
     % Send trigger    
     if stimulus.trigSeq(frame)
-        % replace this line with a line to send the trigger: 
-        fprintf('Trigger %d %5.4f\n ', stimulus.trigSeq(frame), VBLTimestamp-t0);
+        if params.sendTriggers, RTBox('clear',0); RTBox('TTL',128);
+        else, beep; end
     end
         
     % Record the flip time

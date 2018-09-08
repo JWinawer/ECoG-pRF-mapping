@@ -12,6 +12,16 @@ stimulus = makeStimulusFromFile(params);
 % Set fixation params
 params   = setFixationParams(params, stimulus);
 
+% Listen for Trigger Box
+if ~isempty(which('RTBox'))
+    params.sendTriggers = true;
+    RTBox('clear',0);
+    RTBox('TTLWidth', .02);
+    RTBox('enable', 'light');
+else
+    params.sendTriggers = false;
+end
+
 % WARNING! ListChar(2) enables Matlab to record keypresses while disabling
 % output to the command window or editor window. This is good for running
 % experiments because it prevents buttonpresses from accidentally

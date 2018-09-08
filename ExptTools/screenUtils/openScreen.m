@@ -47,8 +47,6 @@ if (params.width~=displayID.numPixels(1) || params.height~=displayID.numPixels(2
   
     displayID.numPixels     = [params.width params.height];
     displayID.frameRate     = params.hz;
-
-    
     
     beep;
     disp('WARNING: Failed to set indicated resolution and refresh rate.');
